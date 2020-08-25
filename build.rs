@@ -4,11 +4,11 @@ use cmake::Config;
 use std::{env, path::PathBuf, process::Command};
 
 // can be overridden by setting the env var ANDROID_NATIVE_API_LEVEL
-const DEFAULT_ANDROID_API_LEVEL: &'static str = "16";
+const DEFAULT_ANDROID_API_LEVEL: &str = "16";
 
-const OPENAL_SOFT_TAG: &'static str = "openal-soft-1.19.1";
+const OPENAL_SOFT_TAG: &str = "openal-soft-1.20.1";
 
-const OPENAL_REPO: &'static str = "https://github.com/kcat/openal-soft.git";
+const OPENAL_REPO: &str = "https://github.com/kcat/openal-soft.git";
 
 fn clone_openalsoft() -> PathBuf {
     let out = PathBuf::from(env::var("OUT_DIR").unwrap()).join("openal-soft");
@@ -57,7 +57,7 @@ fn build_openalsoft(openal_dir: PathBuf) {
         Ok(_) => "SHARED",
         _ => "STATIC"
     };
-    let api_level = env::var("ANDROID_NATIVE_API_LEVEL").unwrap_or(DEFAULT_ANDROID_API_LEVEL.to_owned());
+    let api_level = env::var("ANDROID_NATIVE_API_LEVEL").unwrap_or_else(|_| DEFAULT_ANDROID_API_LEVEL.to_owned());
     let platform = &*format!("android-{}", api_level);
 
     let dst = Config::new(openal_dir)

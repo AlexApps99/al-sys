@@ -22,7 +22,6 @@ macro_rules! al_api {
 		mod al_api {
 			extern crate libloading;
 
-			use std::io;
 			use std::path::Path;
 
 			use super::*;
@@ -52,7 +51,7 @@ macro_rules! al_api {
 
 
 			impl AlApi {
-				pub fn load_default() -> io::Result<AlApi> {
+				pub fn load_default() -> Result<AlApi, libloading::Error> {
 					AlApi::from_lib(libloading::Library::new("libopenal.so")
 						.or_else(|_| libloading::Library::new("libopenal.dylib"))
 						.or_else(|_| libloading::Library::new("OpenAL.framework/OpenAL"))
@@ -62,12 +61,12 @@ macro_rules! al_api {
 				}
 
 
-				pub fn load<P: AsRef<Path>>(path: P) -> io::Result<AlApi> {
+				pub fn load<P: AsRef<Path>>(path: P) -> Result<AlApi, libloading::Error> {
 					AlApi::from_lib(libloading::Library::new(path.as_ref())?)
 				}
 
 
-				fn from_lib(lib: libloading::Library) -> io::Result<AlApi> {
+				fn from_lib(lib: libloading::Library) -> Result<AlApi, libloading::Error> {
 					match RentSymbols::try_new(Box::new(lib), |lib| Ok(AlSymbols{
 						$($sym: unsafe { lib.get(stringify!($sym).as_bytes())? },)*
 					})) {
